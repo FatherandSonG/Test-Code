@@ -1,22 +1,26 @@
-/* Ping))) Sensor
+/* Ping))) Sensor Sketch modified for HC-SR04 Ultrasonic Sensor
 
-   This sketch reads a PING))) ultrasonic rangefinder and returns the
-   distance to the closest object in range. To do this, it sends a pulse
-   to the sensor to initiate a reading, then listens for a pulse
-   to return.  The length of the returning pulse is proportional to
+   This sketch was originally for reading a PING))) ultrasonic rangefinder
+   I modified the sketch from the original to add the return on an alternate pin.
+   
+   The sketch sends a pulse on pin 7 and listens on pin 8 for the echo pulse and returns
+   the distance to the closest object in range.The length of the returning pulse is proportional to
    the distance of the object from the sensor.
 
    The circuit:
-	* +V connection of the PING))) attached to +5V
-	* GND connection of the PING))) attached to ground
-	* SIG connection of the PING))) attached to digital pin 7
+	* VCC connection of the HC-SR04 attached to +5V
+	* GND connection of the HC-SR04 attached to ground
+	* TRIG connection of the HC-SR04 attached to digital pin 7
+	* ECHO connection of the HC-SR04 attached to digital pin 8
 
-   http://www.arduino.cc/en/Tutorial/Ping
+   original code located at http://www.arduino.cc/en/Tutorial/Ping
 
    created 3 Nov 2008
    by David A. Mellis
    modified 30 Aug 2011
    by Tom Igoe
+   modified 20 October 2016
+   by Robin Gambin
 
    This example code is in the public domain.
 
@@ -30,6 +34,8 @@ const int echoPin = 8; //return
 void setup() {
   // initialize serial communication:
   Serial.begin(9600);
+  pinMode(pingPin, OUTPUT);
+  pinMode(echoPin, INPUT);
 }
 
 void loop() {
@@ -37,21 +43,18 @@ void loop() {
   // and the distance result in inches and centimeters:
   long duration, inches, cm;
 
-  // The PING))) is triggered by a HIGH pulse of 2 or more microseconds.
+  // The HC-SR04 is triggered by a HIGH pulse of 8 or more microseconds.
   // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
-  pinMode(pingPin, OUTPUT);
   digitalWrite(pingPin, LOW);
   delayMicroseconds(2);
   digitalWrite(pingPin, HIGH);
   delayMicroseconds(8);
   digitalWrite(pingPin, LOW);
 
-  // The same pin is used to read the signal from the PING))): a HIGH
-  // pulse whose duration is the time (in microseconds) from the sending
+  // HIGH pulse whose duration is the time (in microseconds) from the sending
   // of the ping to the reception of its echo off of an object.
-  //pinMode(pingPin, INPUT);
   duration = pulseIn(echoPin, HIGH);
-  Serial.println(duration);
+   
   // convert the time into a distance
   inches = microsecondsToInches(duration);
   cm = microsecondsToCentimeters(duration);
